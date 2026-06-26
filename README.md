@@ -22,15 +22,25 @@ A real-time emergency ambulance dispatch web application built as a final year p
 ## 📁 Project Structure
 
 src/
+
 ├── pages/
+
 │   ├── EmergencyType.jsx      # Emergency selection screen
+
 │   ├── EmergencyDetails.jsx   # Patient info + map location
+
 │   └── Confirmation.jsx       # Confirm & notify hospital
+
 ├── components/
+
 │   └── MapComponent.jsx       # Leaflet map component
+
 └── utils/
+
 ├── firebase.js            # Firebase connection
+
 ├── notifications.js       # Telegram bot alerts
+
 └── routing.js             # Route calculation
 
 ## 👨‍💻 Developer
