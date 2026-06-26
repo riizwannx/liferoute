@@ -1,0 +1,15 @@
+import { Routes, Route } from 'react-router'
+import EmergencyType from './pages/EmergencyType'
+import EmergencyDetails from './pages/EmergencyDetails'
+import Confirmation from './pages/Confirmation'
+
+export default function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<EmergencyType />} />
+      <Route path="/details" element={<EmergencyDetails />} />
+      <Route path="/hospitals" element={<EmergencyDetails />} />
+      <Route path="/confirm" element={<Confirmation />} />
+    </Routes>
+  )
+}

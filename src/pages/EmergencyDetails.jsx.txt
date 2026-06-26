@@ -1,0 +1,117 @@
+import { useState, useEffect } from 'react'
+import { useLocation, useNavigate } from 'react-router'
+import MapComponent from '../components/MapComponent'
+
+export default function EmergencyDetails() {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [position, setPosition] = useState(null)
+  const [emergencyType, setEmergencyType] = useState('other')
+  const [patientDetails, setPatientDetails] = useState({
+    name: '',
+    age: '',
+    condition: ''
+  })
+
+  useEffect(() => {
+    if (location.state?.emergencyType) {
+      setEmergencyType(location.state.emergencyType)
+    }
+    
+    // Get current location
+    navigator.geolocation.getCurrentPosition(
+      (pos) => setPosition([pos.coords.latitude, pos.coords.longitude]),
+      (err) => console.error("Geolocation error:", err)
+    )
+  }, [location])
+
+  const handleMapClick = (e) => {
+    setPosition([e.latlng.lat, e.latlng.lng])
+  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    navigate('/hospitals', { 
+      state: { 
+        emergencyType,
+        patientDetails,
+        position 
+      } 
+    })
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-100 p-6">
+      <h1 className="text-3xl font-bold text-center mb-8">Emergency Details</h1>
+      
+      <form onSubmit={handleSubmit} className="max-w-2xl mx-auto space-y-6">
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <h2 className="text-xl font-semibold mb-4">Emergency Type: {emergencyType}</h2>
+          <button 
+            type="button"
+            onClick={() => navigate('/')}
+            className="text-blue-600 hover:text-blue-800 text-sm"
+          >
+            Change emergency type
+          </button>
+        </div>
+
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <h2 className="text-xl font-semibold mb-4">Patient Information</h2>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Name</label>
+              <input
+                type="text"
+                value={patientDetails.name}
+                onChange={(e) => setPatientDetails({...patientDetails, name: e.target.value})}
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Age</label>
+              <input
+                type="number"
+                value={patientDetails.age}
+                onChange={(e) => setPatientDetails({...patientDetails, age: e.target.value})}
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Condition Details</label>
+              <textarea
+                value={patientDetails.condition}
+                onChange={(e) => setPatientDetails({...patientDetails, condition: e.target.value})}
+                rows={3}
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <h2 className="text-xl font-semibold mb-4">Emergency Location</h2>
+          {position ? (
+            <MapComponent 
+              center={position} 
+              onMapClick={handleMapClick}
+            />
+          ) : (
+            <p>Loading map...</p>
+          )}
+          <p className="mt-2 text-sm text-gray-500">
+            {position ? `Selected location: ${position[0]}, ${position[1]}` : "Getting your location..."}
+          </p>
+        </div>
+
+        <button
+          type="submit"
+          disabled={!position}
+          className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-md disabled:bg-gray-400"
+        >
+          Find Nearest Hospitals
+        </button>
+      </form>
+    </div>
+  )
+}
